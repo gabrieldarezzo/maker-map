@@ -27,17 +27,29 @@
         width: 100%;
       }
 
-      .full-section div {
-        height: 100%;
+      .full-section > div {
         width: 50%;
       }
 
-
+      .controls-panel {
+          padding: 15px;
+      }
         
       #map {
         height: 100%;
       }
 
+      #select-dynamic {
+        width: 95%;
+        font-size: 18px;
+      }
+
+      .btn {
+        padding: 15px;
+        margin: 0px;
+        background-color: #888;
+        text-transform: uppercase;
+      }
 
     </style>
     <script>
@@ -154,7 +166,27 @@
                 timeout:5000,
                 enableHighAccuracy:true
             });
-            
+
+
+            // var lat = -23.495053438039534;
+            // var lng = -46.791087223139954;
+            document.getElementById('select-dynamic').value = `UPDATE stores SET 
+    location = POINT(locationLat, locationLng)
+WHERE id = 9`;
+
+            document.getElementById('generate-sql').addEventListener('click', function() {
+                document.getElementById('sql-build').innerHTML = "";
+
+                
+                locationsMark.map((location) => {
+                    var sqlStmt = document.getElementById('select-dynamic').value;
+                    console.log(document.getElementById('sql-build').innerHTML);
+                    sqlStmt = sqlStmt.replace("locationLat", location.lat);
+                    sqlStmt = sqlStmt.replace("locationLng", location.lng);
+                    document.getElementById('sql-build').innerHTML = document.getElementById('sql-build').innerHTML + "<br/>\n" + sqlStmt + ";" ;
+                });
+            });
+
         }
         exports.initMap = initMap;
       })((this.window = this.window || {}));
@@ -163,7 +195,12 @@
 <body>
     <section class="full-section">
         <div id="map"></div>
-        <div id="json-latLng"></div>
+        <div class="controls-panel">
+            <textarea name="" id="select-dynamic" rows="5"></textarea>
+            <button class="btn" id="generate-sql">Generate SQL</button>
+            <div id="sql-build"></div>
+            <div id="json-latLng"></div>
+        </div>
     </section>
 </body>
 </html>
